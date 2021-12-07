@@ -1,13 +1,29 @@
 import { Flex, Grid, Heading, Stack, Text } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { InputControl, SubmitButton } from "formik-chakra-ui";
+import { useSendMailForgotPasswordMutation } from "../../store/api/authApi";
 
 const ForgotPassword = () => {
+  const toast = useToast();
+
+  const [sendMail, { isLoading, data, isError, error }] =
+    useSendMailForgotPasswordMutation();
+  if (isError) {
+    toast({
+      title: (error as any).data.message,
+      status: "error",
+      duration: 5000,
+    });
+  }
+  console.log(data);
+
   return (
     <Formik
       initialValues={{ email: "" }}
       onSubmit={(values) => {
         console.log(values);
+        sendMail({ ...values });
       }}
     >
       <Form>
@@ -30,7 +46,7 @@ const ForgotPassword = () => {
               }}
             />
 
-            <SubmitButton>Send Mail</SubmitButton>
+            <SubmitButton isLoading={isLoading}>Send Mail</SubmitButton>
           </Stack>
         </Grid>
       </Form>

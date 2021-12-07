@@ -1,13 +1,17 @@
 import { Grid, Heading, Stack } from "@chakra-ui/layout";
 import { Form, Formik } from "formik";
 import { InputControl, SubmitButton } from "formik-chakra-ui";
+import { useSignupUserMutation } from "../../store/api/authApi";
 
 const Signup = () => {
+  const [signupUser, { data, isLoading }] = useSignupUserMutation();
+  console.log(data);
+
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ name: "", email: "", password: "" }}
       onSubmit={(values) => {
-        console.log(values);
+        signupUser({ ...values });
       }}
     >
       <Form>
@@ -21,6 +25,13 @@ const Signup = () => {
             >
               Signup
             </Heading>
+            <InputControl
+              name="name"
+              label="Name"
+              inputProps={{
+                placeholder: "Enter Name...",
+              }}
+            />
             <InputControl
               name="email"
               label="Email"
@@ -37,7 +48,7 @@ const Signup = () => {
                 type: "password",
               }}
             />
-            <SubmitButton>Signup</SubmitButton>
+            <SubmitButton isLoading={isLoading}>Signup</SubmitButton>
           </Stack>
         </Grid>
       </Form>
